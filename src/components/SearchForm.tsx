@@ -1,4 +1,3 @@
-// components/SearchForm.tsx
 import {
     Box,
     TextField,
@@ -15,17 +14,21 @@ import { DatePicker } from '@mui/x-date-pickers';
 import { useState } from 'react';
 import type { SearchRequest } from '../interface/SearchRequest';
 import dayjs from 'dayjs';
+
 interface Props {
     onSearch: (values: SearchRequest) => void;
+    onDelete: () => void;
+    onInsert: (event: React.MouseEvent) => void;
+    t: (key: string) => string; 
 }
 
-//展示用寫死
-const selectOption = [
-    { value: '', label: '全部部門' },
-    { value: 'D001', label: '人資部' },
-    { value: 'D002', label: '資訊部' },
-    { value: 'D003', label: '財務部' },
-    { value: 'D004', label: '營運部' }
+// 多語系後部門選項
+const selectOption = (t: (key: string) => string) => [
+    { value: '', label: t('allDepartments') },
+    { value: 'D001', label: t('departmentHr') },
+    { value: 'D002', label: t('departmentIt') },
+    { value: 'D003', label: t('departmentFinance') },
+    { value: 'D004', label: t('departmentOperations') }
 ];
 
 const LabelBox = ({ label }: { label: string }) => (
@@ -40,15 +43,15 @@ const initialFormData: SearchRequest = {
     status: null,
 };
 
+const SearchForm = ({ onSearch, onDelete, onInsert , t }: Props) => {
+    
 
-const SearchForm = ({ onSearch }: Props) => {
     //紀錄req的state
     const [formData, setFormData] = useState<SearchRequest>(initialFormData);
 
     const handleChange = (field: keyof SearchRequest, value: any) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     };
-
 
     //處理req資料
     const handleSubmit = () => {
@@ -80,7 +83,7 @@ const SearchForm = ({ onSearch }: Props) => {
                         minWidth: { xs: '100%', sm: '45%' },
                     }}
                 >
-                    <LabelBox label="關鍵字" />
+                    <LabelBox label={t('keyword')} />
                     <TextField
                         variant="outlined"
                         size="small"
@@ -100,7 +103,7 @@ const SearchForm = ({ onSearch }: Props) => {
                         minWidth: { xs: '100%', sm: '50%' },
                     }}
                 >
-                    <LabelBox label="搜尋時間" />
+                    <LabelBox label={t('searchPeriod')} />
                     <Box
                         sx={{
                             ml: { xs: 0, sm: 2 },
@@ -112,14 +115,14 @@ const SearchForm = ({ onSearch }: Props) => {
                         }}
                     >
                         <DatePicker
-                            label="起始"
-                            value={dayjs(formData.startDate)}
+                            label={t('start')}
+                            value={formData.startDate ? dayjs(formData.startDate) : null}
                             onChange={(date) => handleChange('startDate', date)}
                             slotProps={{ textField: { size: 'small', fullWidth: true } }}
                         />
                         <DatePicker
-                            label="結束"
-                            value={dayjs(formData.endDate)}
+                            label={t('end')}
+                            value={formData.endDate ? dayjs(formData.endDate) : null}
                             onChange={(date) => handleChange('endDate', date)}
                             slotProps={{ textField: { size: 'small', fullWidth: true } }}
                         />
@@ -143,15 +146,15 @@ const SearchForm = ({ onSearch }: Props) => {
                         minWidth: { xs: '100%', sm: '45%' },
                     }}
                 >
-                    <LabelBox label="部門" />
+                    <LabelBox label={t('department')} />
                     <FormControl size="small" fullWidth sx={{ ml: 1 }}>
-                        <InputLabel>部門</InputLabel>
+                        <InputLabel>{t('department')}</InputLabel>
                         <Select
-                            label="部門"
+                            label={t('department')}
                             value={formData.departmentId}
                             onChange={(e) => handleChange('departmentId', e.target.value)}
                         >
-                            {selectOption.map((item) => (
+                            {selectOption(t).map((item) => (
                                 <MenuItem key={item.value} value={item.value}>
                                     {item.label}
                                 </MenuItem>
@@ -169,7 +172,7 @@ const SearchForm = ({ onSearch }: Props) => {
                         flexWrap: 'wrap',
                     }}
                 >
-                    <LabelBox label="是否啟用" />
+                    <LabelBox label={t('status')} />
                     <RadioGroup
                         row
                         value={formData.status}
@@ -177,24 +180,32 @@ const SearchForm = ({ onSearch }: Props) => {
                         name="enabled"
                         sx={{ ml: 1 }}
                     >
-                        <FormControlLabel value="yes" control={<Radio size="small" />} label="是" />
-                        <FormControlLabel value="no" control={<Radio size="small" />} label="否" />
+                        <FormControlLabel value="yes" control={<Radio size="small" />} label={t('on')} />
+                        <FormControlLabel value="no" control={<Radio size="small" />} label={t('off')} />
                     </RadioGroup>
                 </Box>
             </Box>
 
-            {/* 搜尋按鈕 */}
+            {/* 按鈕列 */}
             <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-start', mt: 1 }}>
                 <Button variant="outlined" color="info" onClick={handleSubmit}>
-                    搜尋
+                    {t('search')}
                 </Button>
                 <Button
-                    variant="outlined" color="info" onClick={() => {
+                    variant="outlined"
+                    color="info"
+                    onClick={() => {
                         setFormData(initialFormData);
-                        onSearch(initialFormData); //清除後在查一次達成reload功能
+                        onSearch(initialFormData); //清除後查一次達成reload功能
                     }}
                 >
-                    清除
+                    {t('clear')}
+                </Button>
+                <Button variant="outlined" color="info" onClick={onInsert}>
+                    {t('insert')}
+                </Button>
+                <Button variant="contained" color="error" onClick={onDelete}>
+                    {t('batchDelete')}
                 </Button>
             </Box>
         </Box>

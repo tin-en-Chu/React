@@ -1,80 +1,107 @@
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Typography,
-  IconButton,
-  type DialogProps as MuiDialogProps,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Button,
+    IconButton,
+    type DialogProps as MuiDialogProps,
 } from '@mui/material';
 import type { ComponentType } from '../interface/ComponentType';
+import EmployeeDetailForm, { type EmployeeData } from './EmployeeForm';
+import { useEffect, useState } from 'react';
 
 interface DialogProps {
-  open: boolean;
-  title?: string;
-  cancelBtn?: boolean;
-  comfirmBtn?: boolean;
-  componentType: ComponentType;
-  onClose: (result: boolean) => void;
-  maxWidth?: MuiDialogProps['maxWidth']; // 支援 xs, sm, md, lg, xl
+    open: boolean;
+    title?: string;
+    cancelBtn?: boolean;
+    comfirmBtn?: boolean;
+    componentType: ComponentType;
+    onClose: (result: boolean, data?: EmployeeData) => void;
+    maxWidth?: MuiDialogProps['maxWidth']; // 支援 xs, sm, md, lg, xl
+    data?: EmployeeData | null;
+    t: (key: string) => string;  // i18n 翻譯函式型別
 }
 
-/**
- *
- *
- * @export
- * @param {DialogProps} {
- *   open,
- *   title = '確認操作',
- *   onClose,
- *   cancelBtn = true,
- *   comfirmBtn = true,
- *   maxWidth = 'sm',
- * }
- * @return {*}
- */
+const initialData: EmployeeData = {
+    employeeId: '',
+    employeeName: '',
+    departmentId: '',
+    gender: '',
+    birth: '',
+    email: '',
+    startDate: '',
+    phone: '',
+    modifyBy: '',
+    modifyDate: '',
+    status: '',
+};
+
 export default function DialogComponent({
-  open,
-  title = '確認操作',
-  onClose,
-  componentType = 'Detail',
-  cancelBtn = true,
-  comfirmBtn = true,
-  maxWidth = 'sm',
+    open,
+    title,
+    onClose,
+    componentType,
+    maxWidth = 'sm',
+    data,
+    t,
 }: DialogProps) {
-  return (
-    <Dialog open={open} onClose={() => onClose(false)} maxWidth={maxWidth} fullWidth>
-      <DialogTitle>
-        {title}
-        <IconButton
-          aria-label="close"
-          onClick={() => onClose(false)}
-          sx={theme => ({
-            position: 'absolute',
-            right: 8,
-            top: 8,
-            color: theme.palette.grey[500],
-          })}
-        >
-          {' '}
-        </IconButton>
-      </DialogTitle>
+    const [formData, setFormData] = useState<EmployeeData>(data ?? initialData);
 
-      <DialogContent></DialogContent>
+    const handleFieldChange = (key: keyof EmployeeData, value: any) => {
+        setFormData((prev) => ({ ...prev, [key]: value }));
+    };
 
-      <DialogActions>
-        {cancelBtn && (
-          <Button onClick={() => onClose(false)} color="error">
-            取消
-          </Button>
-        )}
-        {comfirmBtn && (
-          <Button onClick={() => onClose(true)} variant="contained" color="primary">
-            確定
-          </Button>
-        )}
-      </DialogActions>
-    </Dialog>
-  );
+    // 切換組件類型或資料更新時重設表單資料
+    useEffect(() => {
+        if (componentType === 'Create') {
+            setFormData(initialData);
+        } else {
+            setFormData(data ?? initialData);
+        }
+    }, [data, componentType]);
+
+    return (
+        <Dialog open={open} onClose={() => onClose(false)} maxWidth={maxWidth} fullWidth>
+            <DialogTitle>
+                {title}
+                <IconButton
+                    aria-label={t('cancel')}
+                    onClick={() => onClose(false)}
+                    sx={(theme) => ({
+                        position: 'absolute',
+                        right: 8,
+                        top: 8,
+                        color: theme.palette.grey[500],
+                    })}
+                >
+                    ×
+                </IconButton>
+            </DialogTitle>
+
+            <DialogContent>
+                <EmployeeDetailForm
+                    data={formData}
+                    onChange={handleFieldChange}
+                    componentType={componentType}
+                    t={t} // 傳遞 t 給子組件
+                />
+            </DialogContent>
+
+            <DialogActions>
+                <Button onClick={() => onClose(false)} color="error">
+                    {t('cancel')}
+                </Button>
+                {componentType !== 'Detail' && (
+                    <Button
+                        onClick={() => onClose(true, formData)}
+                        variant="contained"
+                        color="primary"
+                    >
+                        {componentType === 'Create' ? t('insert') : t('edit')}
+                    </Button>
+                )}
+            </DialogActions>
+        </Dialog>
+    );
 }

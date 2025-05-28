@@ -1,1 +1,1 @@
-export type ComponentType = 'Detail' | 'Edit' | '';
+export type ComponentType = 'Detail' | 'Edit' | 'Create'|null;
