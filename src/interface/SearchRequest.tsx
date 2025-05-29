@@ -5,5 +5,11 @@ export interface SearchRequest {
   departmentId?: string | null;
   status?: string | null;
 }
-
+export const initialFormData: SearchRequest = {
+    employeeId: '',
+    startDate: null,
+    endDate: null,
+    departmentId: '',
+    status: null,
+};
 

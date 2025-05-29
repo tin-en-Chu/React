@@ -12,47 +12,33 @@ import {
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import { useState } from 'react';
-import type { SearchRequest } from '../interface/SearchRequest';
+import { initialFormData, type SearchRequest } from '../interface/SearchRequest';
 import dayjs from 'dayjs';
+import { selectOption } from '../interface/Data';
+import { LabelBox } from '../interface/ComponentType';
 
 interface Props {
     onSearch: (values: SearchRequest) => void;
     onDelete: () => void;
     onInsert: (event: React.MouseEvent) => void;
-    t: (key: string) => string; 
+    t: (key: string) => string;
 }
-
-// 多語系後部門選項
-const selectOption = (t: (key: string) => string) => [
-    { value: '', label: t('allDepartments') },
-    { value: 'D001', label: t('departmentHr') },
-    { value: 'D002', label: t('departmentIt') },
-    { value: 'D003', label: t('departmentFinance') },
-    { value: 'D004', label: t('departmentOperations') }
-];
-
-const LabelBox = ({ label }: { label: string }) => (
-    <Box sx={{ minWidth: 70, whiteSpace: 'nowrap', fontWeight: 500 }}>{label} :</Box>
-);
-
-const initialFormData: SearchRequest = {
-    employeeId: '',
-    startDate: null,
-    endDate: null,
-    departmentId: '',
-    status: null,
-};
-
-const SearchForm = ({ onSearch, onDelete, onInsert , t }: Props) => {
-    
-
-    //紀錄req的state
-    const [formData, setFormData] = useState<SearchRequest>(initialFormData);
-
+/**
+ * 用於查詢列的組件
+ */
+const SearchForm = ({ onSearch, onDelete, onInsert, t }: Props) => {
+    const [formData, setFormData] = useState<SearchRequest>(initialFormData);//紀錄req的狀態
+    //處理每個欄位的變更事件更新搜尋列的狀態
+    //...prev => 原欄位的值
+    //[field]: value => 新欄位的值
     const handleChange = (field: keyof SearchRequest, value: any) => {
-        setFormData(prev => ({ ...prev, [field]: value }));
+        setFormData(prev => {
+            if (prev[field] === value) {
+                return prev; // 沒變就不更新
+            }
+            return { ...prev, [field]: value };// 變了就更新
+        });
     };
-
     //處理req資料
     const handleSubmit = () => {
         const transformedData = {
@@ -64,7 +50,6 @@ const SearchForm = ({ onSearch, onDelete, onInsert , t }: Props) => {
         };
         onSearch(transformedData);
     };
-
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, p: 2 }}>
             {/* 第一列：關鍵字 + 搜尋時間 */}
@@ -93,7 +78,6 @@ const SearchForm = ({ onSearch, onDelete, onInsert , t }: Props) => {
                         onChange={e => handleChange('employeeId', e.target.value)}
                     />
                 </Box>
-
                 {/* 搜尋時間 */}
                 <Box
                     sx={{
@@ -129,7 +113,6 @@ const SearchForm = ({ onSearch, onDelete, onInsert , t }: Props) => {
                     </Box>
                 </Box>
             </Box>
-
             {/* 第二列：部門 + 是否啟用 */}
             <Box
                 sx={{
@@ -154,15 +137,14 @@ const SearchForm = ({ onSearch, onDelete, onInsert , t }: Props) => {
                             value={formData.departmentId}
                             onChange={(e) => handleChange('departmentId', e.target.value)}
                         >
-                            {selectOption(t).map((item) => (
+                            {selectOption.map((item) => (
                                 <MenuItem key={item.value} value={item.value}>
-                                    {item.label}
+                                    {t(item.labelKey)}
                                 </MenuItem>
                             ))}
                         </Select>
                     </FormControl>
                 </Box>
-
                 {/* 是否啟用 */}
                 <Box
                     sx={{
@@ -185,7 +167,6 @@ const SearchForm = ({ onSearch, onDelete, onInsert , t }: Props) => {
                     </RadioGroup>
                 </Box>
             </Box>
-
             {/* 按鈕列 */}
             <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-start', mt: 1 }}>
                 <Button variant="outlined" color="info" onClick={handleSubmit}>
@@ -195,8 +176,8 @@ const SearchForm = ({ onSearch, onDelete, onInsert , t }: Props) => {
                     variant="outlined"
                     color="info"
                     onClick={() => {
-                        setFormData(initialFormData);
-                        onSearch(initialFormData); //清除後查一次達成reload功能
+                        setFormData(initialFormData);// 搜尋狀態清空
+                        onSearch(initialFormData); // 清除後查一次達成reload功能
                     }}
                 >
                     {t('clear')}
@@ -211,5 +192,4 @@ const SearchForm = ({ onSearch, onDelete, onInsert , t }: Props) => {
         </Box>
     );
 };
-
 export default SearchForm;

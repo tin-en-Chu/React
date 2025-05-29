@@ -7,6 +7,7 @@ const resources = {
             insert: "Insert",
             delete: "Delete",
             detail: "Detail",
+            detailLoadSuccess: "Detail Loaded Success",
             clear: "Clear",
             edit: "Edit",
             startDate: "Start Date",
@@ -26,7 +27,6 @@ const resources = {
             errorOccurred: "An error occurred",
             pleaseSelectDelete: "Please select items to delete",
             batchDelete : "BatchDelete",
-
             keyword:"Keyword",
             searchPeriod :"SearchPeriod",
             start:"Start",
@@ -37,7 +37,6 @@ const resources = {
             departmentIt:"IT",
             departmentFinance:"Finance",
             departmentOperations:"Operation",
-
             employeeId:"Id",
             employeeName: "Name",
             employeebirth:"Birth",
@@ -50,8 +49,11 @@ const resources = {
             employeeModifyBy:"ModifyBy",
             employeeModifyDate:"ModifyDate",
             genderMale:"Male",
-            genderFemale:"Female"
-
+            genderFemale:"Female",
+            rowsPerPage: "Rows per page",
+            paginationDisplayedRows: "{{from}}–{{to}} of {{count}}",
+            footerTotalVisibleRows: "{{visibleCount}} of {{totalCount}} total",
+            footerRowSelected: "{{count}} selected"
         },
     },
     zh: {
@@ -59,6 +61,7 @@ const resources = {
             insert: "新增",
             delete: "刪除",
             detail: "明細",
+            detailLoadSuccess: "明細加載成功",
             clear: "清除",
             edit: "編輯",
             startDate: "入職日期",
@@ -79,7 +82,6 @@ const resources = {
             pleaseSelectDelete: "請先勾選要刪除的項目",
             batchDelete : "批次刪除",
             allDepartments:"全部",
-
             keyword:"關鍵字",
             searchPeriod :"搜尋時間",
             start:"開始時間",
@@ -101,7 +103,11 @@ const resources = {
             employeeModifyBy:"修改人",
             employeeModifyDate:"修改日期",
             genderMale:"男",
-            genderFemale:"女"
+            genderFemale:"女",
+            rowsPerPage: "每頁筆數",
+            paginationDisplayedRows: "第 {{from}} 到 {{to}} 筆，共 {{count}} 筆",
+            footerTotalVisibleRows: "顯示 {{visibleCount}} / 共 {{totalCount}} 筆",
+            footerRowSelected: "已選擇 {{count}} 筆"
         },
     },
 };

@@ -1,10 +1,13 @@
 import type { GridLocaleText } from '@mui/x-data-grid';
+import { useTranslation } from 'react-i18next';
 
-// 客製化分頁器顯示欄位
-export const CustomLocaleText: Partial<GridLocaleText> = {
-  paginationRowsPerPage: '每頁筆數',
-  paginationDisplayedRows: ({ from, to, count }) => `第 ${from} 到 ${to} 筆，共 ${count} 筆`,
-  footerTotalVisibleRows: (visibleCount, totalCount) =>
-    `顯示 ${visibleCount} / 共 ${totalCount} 筆`,
-  footerRowSelected: count => `已選擇 ${count} 筆`,
-};
+// 處理pagination bar
+export const getCustomLocaleText = (t: ReturnType<typeof useTranslation>['t']): Partial<GridLocaleText> => ({
+    paginationRowsPerPage: t('rowsPerPage'),
+    paginationDisplayedRows: ({ from, to, count }) =>
+        t('paginationDisplayedRows', { from, to, count }),
+    footerTotalVisibleRows: (visibleCount, totalCount) =>
+        t('footerTotalVisibleRows', { visibleCount, totalCount }),
+    footerRowSelected: count =>
+        t('footerRowSelected', { count }),
+});

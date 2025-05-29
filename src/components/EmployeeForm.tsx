@@ -1,4 +1,3 @@
-import React from 'react';
 import {
     Box,
     TextField,
@@ -10,21 +9,8 @@ import {
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
-import type { ComponentType } from '../interface/ComponentType';
-
-export interface EmployeeData {
-    employeeId: string;
-    employeeName: string;
-    departmentId: string;
-    gender: string;
-    birth: string;
-    email: string;
-    startDate: string;
-    phone: string;
-    modifyBy: string;
-    modifyDate: string;
-    status: string;
-}
+import { FormRow, type ComponentType } from '../interface/ComponentType';
+import { selectOption, type EmployeeData } from '../interface/Data';
 
 interface EmployeeDetailFormProps {
     data: EmployeeData;
@@ -32,57 +18,14 @@ interface EmployeeDetailFormProps {
     componentType: ComponentType;
     t: (key: string) => string;
 }
-
-const selectOption = [
-    { value: 'D001', labelKey: 'departmentHr' },
-    { value: 'D002', labelKey: 'departmentIt' },
-    { value: 'D003', labelKey: 'departmentFinance' },
-    { value: 'D004', labelKey: 'departmentOperations' }
-];
-
-const Label = ({ text }: { text: string }) => (
-    <Box
-        sx={{
-            minWidth: '80px',
-            backgroundColor: '#A0522D',
-            color: 'white',
-            px: 1,
-            py: 0.5,
-            borderRadius: 1,
-            fontSize: 14,
-            fontWeight: 500,
-            whiteSpace: 'nowrap',
-        }}
-    >
-        {text}
-    </Box>
-);
-
-const FormRow = ({ label, children }: { label: string; children: React.ReactNode }) => (
-    <Box
-        sx={{
-            display: 'flex',
-            width: 'calc(50% - 8px)',
-            minWidth: '400px',
-            gap: 1,
-            alignItems: 'center',
-        }}
-    >
-        <Label text={label} />
-        {children}
-    </Box>
-);
-
-export default function EmployeeDetailForm({
-    data,
-    onChange,
-    componentType,
-    t,
-}: EmployeeDetailFormProps) {
+/**
+ * 用於新增、更新、明細顯示的grid組件
+ */
+export default function EmployeeDetailForm({ data, onChange, componentType, t }: EmployeeDetailFormProps) {
+    //處理時間變更事件    
     const handleDateChange = (key: keyof EmployeeData, date: Dayjs | null) => {
         onChange(key, date ? date.format('YYYY-MM-DD') : '');
     };
-
     return (
         <Box
             sx={{
@@ -151,7 +94,7 @@ export default function EmployeeDetailForm({
                 {
                     componentType === 'Detail' ? (
                         <TextField
-                            value={data.status === "Y" ? t('on') : t('of')}
+                            value={data.status === "Y" ? t('on') : t('off')}
                             InputProps={{ readOnly: true }}
                             fullWidth
                             size="small"
